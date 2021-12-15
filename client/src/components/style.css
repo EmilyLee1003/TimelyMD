@@ -1,0 +1,10 @@
+.current {
+  background-color: skyblue;
+}
+.forecast {
+  background-color: lightgray;
+}
+
+.list {
+  background-color: lightpink;
+}
