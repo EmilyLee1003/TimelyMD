@@ -17,12 +17,13 @@ function Home() {
   const [savedCities, setSavedCities] = useState([]);
   const [getLatLong, result] = useLazyGetLatLongQuery();
   const [getCurrentForecast, forecastResult] = useLazyGetCurrentForecastQuery();
-  const [iconID, setIConID] = useState([]);
+  // const [iconID, setIConID] = useState([]);
   const [show, setShow] = useState(false);
-  console.log(show);
-  const url = `http://openweathermap.org/img/wn/${iconID}@2x.png`;
-  console.log("url", url);
-  console.log("icon id", iconID);
+  const [cityTitle, setCityTitle] = useState("");
+  // console.log(show);
+  // const url = `http://openweathermap.org/img/wn/${iconID}@2x.png`;
+  // console.log("url", url);
+  // console.log("icon id", iconID);
   const handleClick = () => {
     let date = new Date();
     var now_utc = Date.UTC(
@@ -39,9 +40,11 @@ function Home() {
 
     //redux to get weather forecast
     getLatLong(searchCity).then((result) => {
-      setIConID(result.data.weather[0].icon);
+      // setIConID(result.data.weather[0].icon);
+      console.log(result);
       getCurrentForecast(result.data.coord);
     });
+    setCityTitle(searchCity);
   };
 
   const saveCity = () => {
@@ -68,6 +71,8 @@ function Home() {
       console.log(result.data.coord);
       getCurrentForecast(result.data.coord);
     });
+
+    setCityTitle(data);
   };
 
   return (
@@ -82,8 +87,8 @@ function Home() {
 
       <div className="forecast">
         <CurrentResults
-          cityName={searchCity}
-          image={url}
+          cityName={cityTitle}
+          // image={url}
           timestamp={timestamp}
           currentData={forecastResult?.data?.current}
         ></CurrentResults>
