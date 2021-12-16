@@ -1,4 +1,4 @@
-This application uses Openweatherapi.org
+This application uses Openweathermap.org
 
 Technologies/Frameworks: ReactJS, Redux Toolkit, Axios, Bootstrap
 Features included:
