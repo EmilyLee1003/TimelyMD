@@ -1,4 +1,6 @@
 This application uses Openweatherapi.org
+
+Technologies/Frameworks: ReactJS, Redux Toolkit, Axios, Bootstrap
 Features included:
 
 - User can search a city to get it's current weather and weekly forecast
