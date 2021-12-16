@@ -3,7 +3,7 @@ import Instance from "../Axios/Instance";
 import SearchInput from "./searchInput";
 import CurrentResults from "./CurrentResults";
 import ForecastResults from "./ForecastResults";
-import SaveButton from "./SaveButton";
+import SavedList from "./SavedList";
 import {
   useLazyGetLatLongQuery,
   useLazyGetCurrentForecastQuery,
@@ -12,112 +12,110 @@ import {
 import "./style.css";
 
 function Home() {
-  const apiKey = "a4a90310c5798c25f8cf1b53c610e354";
   const [searchCity, setSearchCity] = useState("");
-  const [longitude, setLongitude] = useState(0);
-  const [latitude, setLatitude] = useState(0);
   const [timestamp, setTimestamp] = useState("");
   const [savedCities, setSavedCities] = useState([]);
-
   const [getLatLong, result] = useLazyGetLatLongQuery();
   const [getCurrentForecast, forecastResult] = useLazyGetCurrentForecastQuery();
-  console.log(forecastResult);
+  const [iconID, setIConID] = useState([]);
+  const [show, setShow] = useState(false);
+  console.log(show);
+  const url = `http://openweathermap.org/img/wn/${iconID}@2x.png`;
+  console.log("url", url);
+  console.log("icon id", iconID);
   const handleClick = () => {
-    const date = new Date();
-    setTimestamp(date);
+    let date = new Date();
+    var now_utc = Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    );
+
+    let nowdate = new Date(now_utc).toISOString();
+    setTimestamp(nowdate);
+
+    //redux to get weather forecast
     getLatLong(searchCity).then((result) => {
-      console.log(result.data.coord);
+      setIConID(result.data.weather[0].icon);
       getCurrentForecast(result.data.coord);
     });
-    // Instance.get("data/2.5/weather?q=" + searchCity + "&appid=" + apiKey).then(
-    //   (response) => {
-    //     setLongitude(response.data.coord.lon);
-    //     setLatitude(response.data.coord.lat);
-    //   }
-    // );
-
-    // Instance.get(
-    //   "data/2.5/onecall?lat=" +
-    //     latitude +
-    //     "&lon=" +
-    //     longitude +
-    //     "&exclude=minutely,hourly&appid=" +
-    //     apiKey
-    // )
-
-    //   .then((response) => {
-    //     setCurrent(response.data.current);
-    //     setForecast(response.data.daily);
-    //   })
-
-    //   .catch((err) => console.log(err));
   };
 
   const saveCity = () => {
     setSavedCities((previous) => [...previous, searchCity]);
+    setShow(true);
   };
 
   const showSavedCity = (data) => {
     console.log("saved city has been clicked", data);
+    let date = new Date();
+    var now_utc = Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    );
 
-    // const date = new Date();
+    let nowdate = new Date(now_utc).toISOString();
+    setTimestamp(nowdate);
 
-    // Instance.get("data/2.5/weather?q=" + data + "&appid=" + apiKey).then(
-    //   (response) => {
-    //     setLongitude(response.data.coord.lon);
-    //     setLatitude(response.data.coord.lat);
-    //   }
-    // );
-
-    // Instance.get(
-    //   "data/2.5/onecall?lat=" +
-    //     latitude +
-    //     "&lon=" +
-    //     longitude +
-    //     "&exclude=minutely,hourly&appid=" +
-    //     apiKey
-    // )
-
-    //   .then((response) => {
-    //     setCurrent(response.data.current);
-    //     setForecast(response.data.daily);
-    //   })
-
-    //   .catch((err) => console.log(err));
+    getLatLong(data).then((result) => {
+      console.log(result.data.coord);
+      getCurrentForecast(result.data.coord);
+    });
   };
 
   return (
     <div>
-      <SearchInput
-        onChange={(e) => setSearchCity(e.target.value)}
-        onClick={handleClick}
-      />
-      <SaveButton button={saveCity}> </SaveButton>
-      {savedCities.map((data, key) => {
-        return (
-          <li
-            className="list"
-            key={key}
-            onClick={() => {
-              showSavedCity(data);
-            }}
-          >
-            {data}
-          </li>
-        );
-      })}
+      <div className="searchInput">
+        <SearchInput
+          onChange={(e) => setSearchCity(e.target.value)}
+          onClick={handleClick}
+          onClick1={saveCity}
+        />
+      </div>
 
-      <CurrentResults
-        currentData={forecastResult?.data?.current}
-      ></CurrentResults>
+      <div className="forecast">
+        <CurrentResults
+          cityName={searchCity}
+          image={url}
+          timestamp={timestamp}
+          currentData={forecastResult?.data?.current}
+        ></CurrentResults>
 
-      {forecastResult?.data?.daily.map((data, key) => {
-        return (
-          <ForecastResults key={key} forecastData={data}></ForecastResults>
-        );
-      })}
+        {forecastResult?.data?.daily.map((data, key) => {
+          return (
+            <ForecastResults
+              key={key}
+              fromNow={key + 1}
+              forecastData={data}
+            ></ForecastResults>
+          );
+        })}
+      </div>
+
+      {show ? (
+        <div className="savedCities">
+          <div> Saved Cities: </div>
+          {savedCities.map((data, key) => {
+            return (
+              <SavedList
+                key={key}
+                onClick={() => {
+                  showSavedCity(data);
+                }}
+                list={data}
+              ></SavedList>
+            );
+          })}
+        </div>
+      ) : null}
     </div>
   );
 }
-
 export default Home;

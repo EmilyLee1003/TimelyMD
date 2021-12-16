@@ -22,6 +22,13 @@ function SearchInput(props) {
           >
             Search
           </Button>
+          <Button
+            variant="outline-secondary"
+            id="button-addon2"
+            onClick={props.onClick1}
+          >
+            Save
+          </Button>
         </InputGroup>
       </label>
     </div>

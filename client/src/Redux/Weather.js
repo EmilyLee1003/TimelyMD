@@ -10,7 +10,7 @@ export const weatherApi = createApi({
     }),
     getCurrentForecast: builder.query({
       query: (coord) =>
-        `data/2.5/onecall?lat=${coord.lat}&lon=${coord.lon}&exclude=minutely,hourly&appid=${apiKey}`,
+        `data/2.5/onecall?lat=${coord.lat}&lon=${coord.lon}&units=imperial&exclude=minutely,hourly&appid=${apiKey}`,
     }),
   }),
 });

@@ -7,13 +7,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import reportWebVitals from "./reportWebVitals";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { weatherApi } from "./Redux/Weather";
+import { weatherIcon } from "./Redux/Icon";
 
 export const store = configureStore({
   reducer: {
     [weatherApi.reducerPath]: weatherApi.reducer,
+    [weatherIcon.reducerPath]: weatherIcon.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(weatherApi.middleware),
+    getDefaultMiddleware()
+      .concat(weatherApi.middleware)
+      .concat(weatherIcon.middleware),
 });
 
 ReactDOM.render(
